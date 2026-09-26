@@ -1,9 +1,9 @@
-local LOGO_ASSET_ID = "rbxassetid://74401122692681"
-local TOTAL_DURATION = 30
+local TOTAL_DURATION = 40
 
 local Theme = {
     Primary     = Color3.fromHex("#FF69B4"),
     DeepPink    = Color3.fromHex("#FF1493"),
+    HotPink     = Color3.fromHex("#FF3DA6"),
     SoftPink    = Color3.fromHex("#FFB6D9"),
     Petal       = Color3.fromHex("#FFE4F1"),
     Background  = Color3.fromRGB(255, 250, 253),
@@ -14,7 +14,7 @@ local Theme = {
 }
 
 local Messages = {
-    "Connecting to Best Script Hub",
+    "Connecting to Autumn Hub",
     "Loading modules",
     "Preparing interface",
     "Waking up the pink fairies",
@@ -47,22 +47,22 @@ local loaderThread = task.spawn(function()
         return game:HttpGet(LOADER_URL)
     end)
     if not ok or not chunk then
-        warn("[Best Script Hub] Failed to fetch loader payload: " .. tostring(chunk))
+        warn("[Autumn Hub] Failed to fetch loader payload: " .. tostring(chunk))
         return
     end
     local fn, err = loadstring(chunk)
     if not fn then
-        warn("[Best Script Hub] Failed to compile loader payload: " .. tostring(err))
+        warn("[Autumn Hub] Failed to compile loader payload: " .. tostring(err))
         return
     end
     local runOk, runErr = pcall(fn)
     if not runOk then
-        warn("[Best Script Hub] Loader payload errored at runtime: " .. tostring(runErr))
+        warn("[Autumn Hub] Loader payload errored at runtime: " .. tostring(runErr))
     end
 end)
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "BestScriptHubLoader"
+screenGui.Name = "AutumnHubLoader"
 screenGui.ResetOnSpawn = false
 screenGui.DisplayOrder = 999
 screenGui.IgnoreGuiInset = true
@@ -125,20 +125,28 @@ shellGlow.Color = Theme.Glow
 shellGlow.Thickness = 4
 shellGlow.Transparency = 0.4
 
-local logoImage = Instance.new("ImageLabel", logoShell)
-logoImage.Size = UDim2.new(0.84, 0, 0.84, 0)
-logoImage.Position = UDim2.new(0.08, 0, 0.08, 0)
-logoImage.BackgroundTransparency = 1
-logoImage.Image = LOGO_ASSET_ID
-logoImage.ScaleType = Enum.ScaleType.Fit
-logoImage.ZIndex = 6
-Instance.new("UICorner", logoImage).CornerRadius = UDim.new(0, 18)
+local logoLetter = Instance.new("TextLabel", logoShell)
+logoLetter.Size = UDim2.new(1, 0, 1, 0)
+logoLetter.BackgroundTransparency = 1
+logoLetter.Text = "A"
+logoLetter.TextColor3 = Theme.DeepPink
+logoLetter.TextSize = 42
+logoLetter.Font = Enum.Font.GothamBlack
+logoLetter.ZIndex = 6
+
+local logoLetterGrad = Instance.new("UIGradient", logoLetter)
+logoLetterGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Theme.SoftPink),
+    ColorSequenceKeypoint.new(0.5, Theme.Primary),
+    ColorSequenceKeypoint.new(1, Theme.DeepPink),
+})
+logoLetterGrad.Rotation = 90
 
 local title = Instance.new("TextLabel", container)
 title.Size = UDim2.new(1, 0, 0, 32)
 title.Position = UDim2.new(0, 0, 0, 118)
 title.BackgroundTransparency = 1
-title.Text = "Best Script Hub"
+title.Text = "Autumn Hub"
 title.TextColor3 = Theme.Text
 title.TextSize = 26
 title.Font = Enum.Font.GothamBlack
@@ -217,7 +225,7 @@ percentText.TextTransparency = 1
 percentText.ZIndex = 4
 
 for _, c in ipairs(container:GetDescendants()) do
-    if c:IsA("TextLabel") and c ~= percentText then
+    if c:IsA("TextLabel") and c ~= percentText and c ~= logoLetter then
         c.TextTransparency = 1
     elseif c:IsA("Frame") and c ~= barFill and c ~= shine then
         c.BackgroundTransparency = 1
@@ -244,7 +252,7 @@ intro:Play()
 intro.Completed:Wait()
 
 for _, c in ipairs(container:GetDescendants()) do
-    if c:IsA("TextLabel") then
+    if c:IsA("TextLabel") and c ~= logoLetter then
         TweenService:Create(c, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), { TextTransparency = 0 }):Play()
     elseif c:IsA("Frame") and c ~= shine and c ~= barFill then
         TweenService:Create(c, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), { BackgroundTransparency = 0 }):Play()
